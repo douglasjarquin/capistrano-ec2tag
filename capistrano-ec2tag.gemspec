@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.version     = "0.0.1"
   s.authors     = ["Douglas Jarquin"]
   s.email       = ["douglasjarquin@gmail.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.homepage    = "https://github.com/douglasjarquin/capistrano-ec2tag"
+  s.summary     = "A Capistrano plugin aimed at easing the pain of deploying to Amazon EC2 instances by using a simple \"deploy\" tag."
+  s.description = "capistrano-ec2tag is a Capistrano plugin designed to simplify the task of deploying to infrastructure hosted on Amazon EC2. It was completely inspired by the capistrano-ec2group plugin, to which all credit is due."
 
   s.rubyforge_project = "capistrano-ec2tag"
 
@@ -20,4 +20,3 @@ Gem::Specification.new do |s|
   s.add_dependency "capistrano", ">=2.1.0"
   s.add_dependency "right_aws"
 end
-
