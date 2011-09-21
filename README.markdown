@@ -1,7 +1,7 @@
 # capistrano-ec2tag
 
 A Capistrano plugin aimed at easing the pain of deploying to Amazon EC2
-instances.
+instances by using a simple "deploy" tag.
 
 ## Introduction
 
@@ -76,18 +76,35 @@ Install the gems in your manifest using:
 bundle install
 ```
 
-#### Usage:
+## Usage
+
+### Tag your instances
+
+Using the Amazon EC2 API or the AWS Management Console, add a `deploy`
+tag to all the instances you want Capistrano to deploy to.
+
+The value can be any string, but I do recommend it be both unique and
+somehow explicit to the type of server this is. If you have used the [capistrano-ec2group](https://github.com/logandk/capistrano-ec2group), then this might be equal to whatever security group names you use.
+
+### Configure Capistrano
 
 ```ruby
 require 'capistrano/ec2tag'
 
-task :deploy do
-  tag "testing-web", :web
-  logger.info "Deploying to the TESTING environment!"
+task :production do
+  tag "production-github-web", :web
+  tag "production-github-job", :job
+  logger.info "Deploying to the PRODUCTION environment!"
+end
+
+task :staging do
+  tag "staging-github-web", :web
+  tag "staging-github-job", :job
+  logger.info "Deploying to the STAGING environment!"
 end
 ```
 
-# License
+## License
 
 capistrano-ec2tag is copyright 2011 by [Douglas Jarquin](http://www.douglasjarquin.com/), released under the MIT License (see LICENSE for details).
 
