@@ -1,1 +1,1 @@
-require "capistrano/ec2tag"
+require 'capistrano/ec2tag'
