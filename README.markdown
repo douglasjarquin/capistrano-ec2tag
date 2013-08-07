@@ -101,10 +101,8 @@ end
 There is built in support for instances hosted outside the default `us-east-1` AWS Region. In your capistrano configuration, specify the following:
 
 ```ruby
-set :regions, ['eu-west-1']
+set :regions, ['eu-west-1'] # requires an array
 ```
-
-_Note: This attribute requires an array._
 
 In my configurations, I usually load in an ENVIRONMENT_VARIABLE so that I can pass in overrides from the command line like so:
 
