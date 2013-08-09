@@ -96,6 +96,30 @@ task :staging do
 end
 ```
 
+### Multi-Region Instances
+
+There is built in support for instances hosted outside the default `us-east-1` AWS Region. In your capistrano configuration, specify the following:
+
+```ruby
+set :regions, ['eu-west-1'] # requires an array
+```
+
+In my configurations, I usually load in an ENVIRONMENT_VARIABLE so that I can pass in overrides from the command line like so:
+
+```ruby
+set :regions, [(ENV['REGIONS'] || 'eu-west-1')]
+```
+
+Options include:
+
+- `eu-west-1`
+- `sa-east-1`
+- `us-east-1`
+- `ap-northeast-1`
+- `us-west-2`
+- `us-west-1`
+- `ap-southeast-1`
+
 ## License
 
 capistrano-ec2tag is copyright 2013 by [Douglas Jarquin](http://douglasjarquin.com/), released under the MIT License (see LICENSE for details).
