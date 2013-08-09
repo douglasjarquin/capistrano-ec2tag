@@ -3,7 +3,7 @@ $:.push File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = 'capistrano-ec2tag'
-  s.version     = '0.1.1'
+  s.version     = '0.1.2'
   s.authors     = ['Douglas Jarquin']
   s.email       = ['douglasjarquin@me.com']
   s.homepage    = 'https://github.com/douglasjarquin/capistrano-ec2tag'
@@ -17,6 +17,6 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_dependency 'capistrano', '>=2.14.2'
+  s.add_dependency 'capistrano', '>=2.15.5'
   s.add_dependency 'aws-sdk', '>=1.8.5'
 end
