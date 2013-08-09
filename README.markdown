@@ -1,125 +1,71 @@
 ## Introduction
 
 capistrano-ec2tag is a [Capistrano](https://github.com/capistrano/capistrano) plugin designed to simplify the
-task of deploying to infrastructure hosted on [Amazon EC2](http://aws.amazon.com/ec2/). It was
-completely inspired by the [capistrano-ec2group](https://github.com/logandk/capistrano-ec2group) plugin, to which all credit is due.
+task of deploying to infrastructure hosted on [Amazon EC2](http://aws.amazon.com/ec2/). It was inspired by the [capistrano-ec2group](https://github.com/logandk/capistrano-ec2group) plugin, to which all credit is due.
 
-While the original [capistrano-ec2group](https://github.com/logandk/capistrano-ec2group) plugin served me well, I started to run into limitations pretty quickly. I will say that at the time that the capistrano-ec2group plugin was written, I don't think Amazon EC2 supported tags yet.
+While the original [capistrano-ec2group](https://github.com/logandk/capistrano-ec2group) plugin served me well, I started to run into cases where I wanted more flexibility. More specifically, in order to change security groups, instances have to be restarted.
 
-Using Tags instead of Security Groups gives you the ability to change which servers get deployed to at any time, without having to reboot the instance. This implementation is particularly useful for A/B deployments, or in auto-scaling environments.
+I created capistrano-ec2tag to bypass this limitation. Now, modifying the list of instances that are deployable is as easy as modifying tags.
 
 ## Installation
 
-### Set the Amazon AWS Credentials
+Add this line to your application's Gemfile:
 
-In order for the plugin to list out the hostnames of your EC2 instances, it
-will need access to the Amazon EC2 API. Specify the following in your
-Capistrano configuration:
+```
+gem 'capistrano-ec2tag'
+```
+
+And then execute:
+
+```
+$ bundle
+```
+
+Or install it yourself as:
+
+```
+$ gem install capistrano-ec2tag
+```
+
+## Configuration
+
+Tag your instances, using `deploy` as the key. For example:
+
+![tag-example](https://f.cloud.github.com/assets/8209/939801/af9155fc-011d-11e3-9a6a-a07b0d4e9dc6.png)
+
+The tag value can be any string, but I suggest using something like `APP-ENVIRONMENT`.
+
+## Usage
+
+Add this to the top of your `deploy.rb`:
+
+```ruby
+require 'capistrano/ec2tag'
+```
+
+Then supply your AWS credentials with the environment variables (default):
+
+```zsh
+# aws
+export AWS_ACCESS_KEY_ID='...'
+export AWS_SECRET_ACCESS_KEY='...'
+```
+
+Or in your `deploy.rb` with capistrano variables:
 
 ```ruby
 set :aws_access_key_id, '...'
 set :aws_secret_access_key, '...'
 ```
 
-**Suggestion**
-
-My preferred method of passing Amazon AWS credentials to the different tools is to use environment variables. A trick I picked up from the [Chef help site](http://help.opscode.com/discussions/questions/246-best-practices-for-multiple-developers-kniferb-in-chef-repo-or-not).
-
-In my `~/.zshrc` I have:
-
-
-```zsh
-# aws credentials
-export AWS_ACCESS_KEY_ID='...'
-export AWS_SECRET_ACCESS_KEY='...'
-```
-
-Then, in a `~/.caprc` I do the following:
-
-``` ruby
-set :aws_access_key_id, ENV['AWS_ACCESS_KEY_ID']
-set :aws_secret_access_key, ENV['AWS_SECRET_ACCESS_KEY']
-```
-
-### Get the gem
-
-The plugin is distributed as a Ruby gem.
-
-**Ruby Gems**
-
-```bash
-gem install capistrano-ec2tag
-```
-
-**Bundler**
-
-Using [bundler](http://gembundler.com/)?
-
-``` ruby
-source 'http://rubygems.org'
-gem 'capistrano-ec2tag'
-```
-
-Install the gems in your manifest using:
-
-``` bash
-bundle install
-```
-
-## Usage
-
-### Tag your instances
-
-Using the Amazon EC2 API or the AWS Management Console, add a `deploy` tag to all the instances you want Capistrano to deploy to.
-
-The value can be any string, but I do recommend it be both unique and easy to recognize. If you have used the [capistrano-ec2group](https://github.com/logandk/capistrano-ec2group), then this might be equal to whatever security group names you use.
-
-Personally, we use the folowing convention:
-
-```
-APP-ENVIRONMENT
-```
-
-### Configure Capistrano
-
 ```ruby
-require 'capistrano/ec2tag'
+# old & busted
+server 'web1.example.com', :web
 
-task :production do
-  tag 'github-production', :web
-  logger.info 'Deploying to the PRODUCTION environment!'
-end
-
-task :staging do
-  tag 'github-staging', :web
-  logger.info 'Deploying to the STAGING environment!'
-end
+# new hotness
+tag 'github-staging', :web
 ```
-
-### Multi-Region Instances
-
-There is built in support for instances hosted outside the default `us-east-1` AWS Region. In your capistrano configuration, specify the following:
-
-```ruby
-set :regions, ['eu-west-1'] # requires an array
-```
-
-In my configurations, I usually load in an ENVIRONMENT_VARIABLE so that I can pass in overrides from the command line like so:
-
-```ruby
-set :regions, [(ENV['REGIONS'] || 'eu-west-1')]
-```
-
-Options include:
-
-- `eu-west-1`
-- `sa-east-1`
-- `us-east-1`
-- `ap-northeast-1`
-- `us-west-2`
-- `us-west-1`
-- `ap-southeast-1`
 
 ## License
 
-capistrano-ec2tag is copyright 2013 by [Douglas Jarquin](http://douglasjarquin.com/), released under the MIT License (see LICENSE for details).
+capistrano-ec2tag is copyright 2013 by [Douglas Jarquin](http://douglasjarquin.com/), released under the MIT License (see LICENSE for details).`
