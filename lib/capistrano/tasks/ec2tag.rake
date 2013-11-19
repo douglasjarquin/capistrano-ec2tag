@@ -4,7 +4,7 @@ namespace :ec2tag do
   task :tag, :which do |t, args|
     @ec2 ||= AWS::EC2.new({access_key_id: fetch(:aws_access_key_id), secret_access_key: fetch(:aws_secret_access_key), region: fetch(:aws_region, 'us-east-1')}.merge! fetch(:aws_params, {}))
 
-    @ec2.instances.tap { |x| puts x.count }.filter('tag-key', 'deploy').filter('tag-value', args[:which]).each do |instance|
+    @ec2.instances.filter('tag-key', 'deploy').filter('tag-value', args[:which]).each do |instance|
       server instance.ip_address || instance.private_ip_address, *args.extras if instance.status == :running
     end
   end
