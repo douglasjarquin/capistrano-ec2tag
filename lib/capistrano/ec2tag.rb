@@ -1,6 +1,5 @@
 require 'capistrano'
 require 'aws-sdk'
-
 module Capistrano
   module Ec2tag
     def self.extend(configuration)
@@ -28,7 +27,11 @@ module Capistrano
   end
 end
 
-if Capistrano::Configuration.instance
-  Capistrano::Ec2tag.extend(Capistrano::Configuration.instance)
+if Capistrano::Configuration.respond_to? :instance
+  if Capistrano::Configuration.instance
+    Capistrano::Ec2tag.extend(Capistrano::Configuration.instance)
+  end
+else
+  load File.expand_path("../tasks/ec2tag.rake", __FILE__)
 end
 
