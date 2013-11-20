@@ -14,7 +14,7 @@ module Capistrano
             @ec2 ||= AWS::EC2.new({access_key_id: fetch(:aws_access_key_id), secret_access_key: fetch(:aws_secret_access_key)}.merge! fetch(:aws_params, {}))
 
             servers = @ec2.instances.filter('tag-key', 'deploy').filter('tag-value', which)
-            if idxs = fetch(:server_idxs)
+            if idxs = fetch(:server_idxs, nil)
               servers = servers.sort_by { |x| x.tags['Name'] || x.private_ip_address }.each_with_index.select { |x, idx| idxs.include? idx + 1}.map(&:first)
             end
             servers.each do |instance|
