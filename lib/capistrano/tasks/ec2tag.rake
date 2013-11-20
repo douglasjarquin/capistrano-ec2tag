@@ -7,6 +7,7 @@ namespace :ec2tag do
     @ec2.instances.filter('tag-key', 'deploy').filter('tag-value', args[:which]).each do |instance|
       server instance.ip_address || instance.private_ip_address, *args.extras if instance.status == :running
     end
+    ::Rake.application['ec2tag:tag'].reenable
   end
 
   before :tag, :aws_credentials do
