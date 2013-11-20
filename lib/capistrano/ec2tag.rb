@@ -17,9 +17,10 @@ module Capistrano
             if idxs = fetch(:server_idxs, nil)
               servers = servers.sort_by { |x| x.tags['Name'] || x.private_ip_address }.each_with_index.select { |x, idx| idxs.include? idx + 1}.map(&:first)
             end
-            servers.each do |instance|
+            servers.map do |instance|
               logger.info "adding server #{instance.tags['Name'] || instance.ip_address}, #{args.join(', ')} "
               server instance.ip_address || instance.private_ip_address, *args if instance.status == :running
+              instance.tags['Name'] || instance.ip_address
             end
           end
         end
