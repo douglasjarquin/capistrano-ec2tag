@@ -28,7 +28,9 @@ module Capistrano
     end
 
     def self.read_from_credential_file(key_name, credential_file_name)
-      File.open(credential_file_name).readlines.select { |line| line =~ /^#{key_name}=/ }.map { |line| line[/=(.+)$/, 1] }.first
+      if credential_file_name
+        File.open(credential_file_name).readlines.select { |line| line =~ /^#{key_name}=/ }.map { |line| line[/=(.+)$/, 1] }.first
+      end
     end
   end
 end
