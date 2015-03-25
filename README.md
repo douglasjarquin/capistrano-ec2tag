@@ -65,6 +65,12 @@ server 'web1.example.com', :web
 # new hotness
 tag 'github-staging', :web
 ```
+If you are running capistrano on ec2 and would like to use private
+ip address
+
+```ruby
+set :aws_force_pvt_ip, true
+```
 
 ## License
 
