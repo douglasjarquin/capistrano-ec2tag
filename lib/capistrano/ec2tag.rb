@@ -22,11 +22,18 @@ module Capistrano
           end
 
           def ec2_instances(tag)
+            force_pvt_ip = fetch(:aws_force_pvt_ip, false)
+
             AWS.memoize do
               return @ec2.instances.filter('tag-key', tag).inject({}) do |res,instance|
                 tag_name = instance.tags.to_h[tag]
                 res[tag_name] ||= []
-                res[tag_name] << [ instance.private_ip_address, instance.status]
+                ip_address = if force_pvt_ip
+                               instance.private_ip_address
+                             else
+                               instance.ip_address || instance.private_ip_address
+                             end
+                res[tag_name] << [ ip_address, instance.status]
                 res
               end
             end
