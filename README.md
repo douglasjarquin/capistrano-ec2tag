@@ -58,6 +58,19 @@ set :aws_access_key_id, '...'
 set :aws_secret_access_key, '...'
 ```
 
+Alternatively you can use an [AWS_CREDENTIAL_FILE](http://docs.aws.amazon.com/IAM/latest/CLIReference/Setup.html#SettingUpCredsFile)
+
+```zsh
+#aws
+export AWS_CREDENTIAL_FILE='...'
+```
+
+or
+
+```ruby
+set :aws_credential_file, '...'
+```
+
 ```ruby
 # old & busted
 server 'web1.example.com', :web
