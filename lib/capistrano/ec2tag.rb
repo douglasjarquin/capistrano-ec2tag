@@ -13,16 +13,38 @@ module Capistrano
           def tag(which, *args)
             @ec2 ||= AWS::EC2.new({access_key_id: fetch(:aws_access_key_id), secret_access_key: fetch(:aws_secret_access_key)}.merge! fetch(:aws_params, {}))
 
-            servers = @ec2.instances.filter('tag-key', 'deploy').filter('tag-value', which)
+            @target_instances = ec2_instances('deploy') unless @target_instances
+
+            servers = @target_instances[which] || []
             if idxs = fetch(:server_idxs, nil)
-              servers = servers.sort_by { |x| x.tags['Name'] || x.private_ip_address }.each_with_index.select { |x, idx| idxs.include? idx + 1}.map(&:first)
+              servers = servers.sort_by { |x| x[2] || x[3] }.each_with_index.select { |x, idx| idxs.include? idx + 1 }.map(&:first)
             end
-            servers.map do |instance|
-              logger.info "adding server #{instance.tags['Name'] || instance.ip_address}, #{args.join(', ')} "
-              server instance.ip_address || instance.private_ip_address, *args if instance.status == :running
-              instance.tags['Name'] || instance.ip_address
+            servers.map do |ip, status, name, _private_ip|
+              logger.info "adding server #{name || ip}, #{args.join(', ')} "
+              server ip, *args if status == :running
+              name || ip
             end
           end
+
+          def ec2_instances(tag)
+            force_pvt_ip = fetch(:aws_force_pvt_ip, false)
+
+            AWS.memoize do
+              return @ec2.instances.filter('tag-key', tag).inject({}) do |res,instance|
+                tag_name = instance.tags.to_h[tag]
+                res[tag_name] ||= []
+                ip_address = if force_pvt_ip
+                               instance.private_ip_address
+                             else
+                               instance.ip_address || instance.private_ip_address
+                             end
+                # [ip_address, status, Name tag, private_ip_address]
+                res[tag_name] << [ ip_address, instance.status, instance.tags['Name'], instance.private_ip_address ]
+                res
+              end
+            end
+          end
+
         end
       end
     end
